@@ -4,20 +4,20 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.618" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.619" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.572" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.573" = type { ptr, ptr }
 %runtime_error_t = type <{ i64, i64, i32 }>
 %kstack_key = type { i64, i64 }
 %ustack_key = type { i64, i64, i32, i32 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@AT_y = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
-@stack_bpftrace_127 = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !35
-@stack_scratch = dso_local global %"struct map_internal_repr_t.618" zeroinitializer, section ".maps", !dbg !55
-@ringbuf = dso_local global %"struct map_internal_repr_t.619" zeroinitializer, section ".maps", !dbg !67
+@AT_y = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
+@stack_bpftrace_127 = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !35
+@stack_scratch = dso_local global %"struct map_internal_repr_t.572" zeroinitializer, section ".maps", !dbg !55
+@ringbuf = dso_local global %"struct map_internal_repr_t.573" zeroinitializer, section ".maps", !dbg !67
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !81
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !85
 
@@ -53,7 +53,7 @@ stack_scratch_failure:                            ; preds = %lookup_stack_scratc
 
 merge_block:                                      ; preds = %stack_scratch_failure, %helper_merge2, %get_stack_fail
   %1 = getelementptr %ustack_key, ptr %stack_key, i64 0, i32 2
-  %get_pid_tgid = call i64 inttoptr (i64 14 to ptr)() #4
+  %get_pid_tgid = call i64 inttoptr (i64 14 to ptr)() #5
   %2 = lshr i64 %get_pid_tgid, 32
   %pid = trunc i64 %2 to i32
   store i32 %pid, ptr %1, align 4
@@ -61,6 +61,7 @@ merge_block:                                      ; preds = %stack_scratch_failu
   store i32 0, ptr %3, align 4
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_key")
   store i64 0, ptr %"@x_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %stack_key, ptr align 1 %stack_key, i64 24, i1 false)
   %update_elem10 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key", ptr %stack_key, i64 0)
   %4 = trunc i64 %update_elem10 to i32
   %5 = icmp sge i32 %4, 0
@@ -109,7 +110,7 @@ helper_merge:                                     ; preds = %counter_merge, %loo
   br i1 %17, label %get_stack_success, label %get_stack_fail
 
 event_loss_counter:                               ; preds = %helper_failure
-  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #5
   %18 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded = and i64 %get_cpu_id, %18
   %19 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded, i64 0
@@ -138,7 +139,7 @@ helper_merge2:                                    ; preds = %counter_merge6, %ge
   br label %merge_block
 
 event_loss_counter5:                              ; preds = %helper_failure1
-  %get_cpu_id8 = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id8 = call i64 inttoptr (i64 8 to ptr)() #5
   %25 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded9 = and i64 %get_cpu_id8, %25
   %26 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded9, i64 0
@@ -175,7 +176,7 @@ helper_merge12:                                   ; preds = %counter_merge16, %m
   br i1 %lookup_stack_scratch_cond27, label %lookup_stack_scratch_merge26, label %lookup_stack_scratch_failure25
 
 event_loss_counter15:                             ; preds = %helper_failure11
-  %get_cpu_id18 = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id18 = call i64 inttoptr (i64 8 to ptr)() #5
   %32 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded19 = and i64 %get_cpu_id18, %32
   %33 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded19, i64 0
@@ -194,6 +195,7 @@ stack_scratch_failure21:                          ; preds = %lookup_stack_scratc
 merge_block22:                                    ; preds = %stack_scratch_failure21, %helper_merge44, %get_stack_fail30
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@y_key")
   store i64 0, ptr %"@y_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %stack_key20, ptr align 1 %stack_key20, i64 16, i1 false)
   %update_elem52 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_y, ptr %"@y_key", ptr %stack_key20, i64 0)
   %36 = trunc i64 %update_elem52 to i32
   %37 = icmp sge i32 %36, 0
@@ -242,7 +244,7 @@ helper_merge33:                                   ; preds = %counter_merge37, %l
   br i1 %49, label %get_stack_success29, label %get_stack_fail30
 
 event_loss_counter36:                             ; preds = %helper_failure32
-  %get_cpu_id39 = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id39 = call i64 inttoptr (i64 8 to ptr)() #5
   %50 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded40 = and i64 %get_cpu_id39, %50
   %51 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded40, i64 0
@@ -271,7 +273,7 @@ helper_merge44:                                   ; preds = %counter_merge48, %g
   br label %merge_block22
 
 event_loss_counter47:                             ; preds = %helper_failure43
-  %get_cpu_id50 = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id50 = call i64 inttoptr (i64 8 to ptr)() #5
   %57 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded51 = and i64 %get_cpu_id50, %57
   %58 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded51, i64 0
@@ -301,7 +303,7 @@ helper_merge54:                                   ; preds = %counter_merge58, %m
   ret i64 0
 
 event_loss_counter57:                             ; preds = %helper_failure53
-  %get_cpu_id60 = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id60 = call i64 inttoptr (i64 8 to ptr)() #5
   %64 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded61 = and i64 %get_cpu_id60, %64
   %65 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded61, i64 0
@@ -401,11 +403,15 @@ declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #2
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #3
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #4
+
 attributes #0 = { nounwind }
 attributes #1 = { alwaysinline nounwind }
 attributes #2 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 attributes #3 = { nocallback nofree nounwind willreturn memory(argmem: write) }
-attributes #4 = { memory(none) }
+attributes #4 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #5 = { memory(none) }
 
 !llvm.dbg.cu = !{!87}
 !llvm.module.flags = !{!89, !90}

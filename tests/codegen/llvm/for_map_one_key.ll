@@ -4,14 +4,14 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr }
 %uint8_uint8__tuple_t = type { i8, i8 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_map = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@AT_x = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !25
-@ringbuf = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !39
+@AT_x = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !25
+@ringbuf = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !39
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !53
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !57
 
@@ -55,6 +55,7 @@ for_body:
   store i8 %val, ptr %5, align 1
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_key")
   store i64 0, ptr %"@x_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"$kv", ptr align 1 %"$kv", i64 2, i1 false)
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key", ptr %"$kv", i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_key")
   br label %for_continue
@@ -66,9 +67,13 @@ for_continue:                                     ; preds = %for_body
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #2
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #3
+
 attributes #0 = { nounwind }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 attributes #2 = { nocallback nofree nounwind willreturn memory(argmem: write) }
+attributes #3 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
 
 !llvm.dbg.cu = !{!59}
 !llvm.module.flags = !{!61, !62}

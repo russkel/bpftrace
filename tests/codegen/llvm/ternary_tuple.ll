@@ -5,7 +5,6 @@ target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr }
 %"string[16]_uint8__tuple_t" = type { [16 x i8], i8 }
-%"string[3]_uint8__tuple_t" = type { [3 x i8], i8 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @ringbuf = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
@@ -24,51 +23,44 @@ entry:
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"$x")
   call void @llvm.memset.p0.i64(ptr align 1 %"$x", i8 0, i64 17, i1 false)
   %tuple1 = alloca %"string[16]_uint8__tuple_t", align 8
-  %tuple = alloca %"string[3]_uint8__tuple_t", align 8
-  %1 = alloca %"string[16]_uint8__tuple_t", align 8
-  call void @llvm.lifetime.start.p0(i64 -1, ptr %1)
-  call void @llvm.memset.p0.i64(ptr align 1 %1, i8 0, i64 17, i1 false)
+  %tuple = alloca %"string[16]_uint8__tuple_t", align 8
+  %1 = alloca [16 x i8], align 1
+  %2 = alloca %"string[16]_uint8__tuple_t", align 8
+  call void @llvm.lifetime.start.p0(i64 -1, ptr %2)
+  call void @llvm.memset.p0.i64(ptr align 1 %2, i8 0, i64 17, i1 false)
   %get_ns = call i64 inttoptr (i64 125 to ptr)()
   %true_cond = icmp ne i64 %get_ns, 0
   br i1 %true_cond, label %left, label %right
 
 left:                                             ; preds = %entry
+  call void @llvm.lifetime.start.p0(i64 -1, ptr %1)
+  call void @llvm.memset.p0.i64(ptr align 1 %1, i8 0, i64 16, i1 false)
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %1, ptr align 1 @hi, i64 3, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %tuple)
-  call void @llvm.memset.p0.i64(ptr align 1 %tuple, i8 0, i64 4, i1 false)
-  %2 = getelementptr %"string[3]_uint8__tuple_t", ptr %tuple, i32 0, i32 0
-  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %2, ptr align 1 @hi, i64 3, i1 false)
-  %3 = getelementptr %"string[3]_uint8__tuple_t", ptr %tuple, i32 0, i32 1
-  store i8 1, ptr %3, align 1
-  %4 = getelementptr [4 x i8], ptr %tuple, i64 0, i64 0
-  %5 = getelementptr %"string[16]_uint8__tuple_t", ptr %1, i32 0, i32 0
-  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %5, ptr align 1 %4, i64 3, i1 false)
-  %6 = getelementptr [4 x i8], ptr %tuple, i64 0, i64 3
-  %7 = getelementptr %"string[16]_uint8__tuple_t", ptr %1, i32 0, i32 1
-  %8 = load i8, ptr %6, align 1
-  store i8 %8, ptr %7, align 1
+  call void @llvm.memset.p0.i64(ptr align 1 %tuple, i8 0, i64 17, i1 false)
+  %3 = getelementptr %"string[16]_uint8__tuple_t", ptr %tuple, i32 0, i32 0
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %3, ptr align 1 %1, i64 16, i1 false)
+  %4 = getelementptr %"string[16]_uint8__tuple_t", ptr %tuple, i32 0, i32 1
+  store i8 1, ptr %4, align 1
+  call void @llvm.lifetime.end.p0(i64 -1, ptr %1)
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %2, ptr align 1 %tuple, i64 17, i1 false)
   br label %done
 
 right:                                            ; preds = %entry
   call void @llvm.lifetime.start.p0(i64 -1, ptr %tuple1)
   call void @llvm.memset.p0.i64(ptr align 1 %tuple1, i8 0, i64 17, i1 false)
-  %9 = getelementptr %"string[16]_uint8__tuple_t", ptr %tuple1, i32 0, i32 0
-  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %9, ptr align 1 @extralongstring, i64 16, i1 false)
-  %10 = getelementptr %"string[16]_uint8__tuple_t", ptr %tuple1, i32 0, i32 1
-  store i8 2, ptr %10, align 1
-  %11 = getelementptr [17 x i8], ptr %tuple1, i64 0, i64 0
-  %12 = getelementptr %"string[16]_uint8__tuple_t", ptr %1, i32 0, i32 0
-  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %12, ptr align 1 %11, i64 16, i1 false)
-  %13 = getelementptr [17 x i8], ptr %tuple1, i64 0, i64 16
-  %14 = getelementptr %"string[16]_uint8__tuple_t", ptr %1, i32 0, i32 1
-  %15 = load i8, ptr %13, align 1
-  store i8 %15, ptr %14, align 1
+  %5 = getelementptr %"string[16]_uint8__tuple_t", ptr %tuple1, i32 0, i32 0
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %5, ptr align 1 @extralongstring, i64 16, i1 false)
+  %6 = getelementptr %"string[16]_uint8__tuple_t", ptr %tuple1, i32 0, i32 1
+  store i8 2, ptr %6, align 1
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %2, ptr align 1 %tuple1, i64 17, i1 false)
   br label %done
 
 done:                                             ; preds = %right, %left
   call void @llvm.lifetime.end.p0(i64 -1, ptr %tuple1)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %tuple)
-  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"$x", ptr align 1 %1, i64 17, i1 false)
-  call void @llvm.lifetime.end.p0(i64 -1, ptr %1)
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"$x", ptr align 1 %2, i64 17, i1 false)
+  call void @llvm.lifetime.end.p0(i64 -1, ptr %2)
   ret i64 0
 }
 

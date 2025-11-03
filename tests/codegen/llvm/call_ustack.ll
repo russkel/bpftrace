@@ -4,24 +4,24 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.618" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.619" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.620" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.621" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.622" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.572" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.573" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.574" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.575" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.576" = type { ptr, ptr }
 %ustack_key = type { i64, i64, i32, i32 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@AT_y = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
-@AT_z = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !28
-@stack_perf_127 = dso_local global %"struct map_internal_repr_t.618" zeroinitializer, section ".maps", !dbg !30
-@stack_bpftrace_6 = dso_local global %"struct map_internal_repr_t.619" zeroinitializer, section ".maps", !dbg !54
-@stack_bpftrace_127 = dso_local global %"struct map_internal_repr_t.620" zeroinitializer, section ".maps", !dbg !63
-@stack_scratch = dso_local global %"struct map_internal_repr_t.621" zeroinitializer, section ".maps", !dbg !65
-@ringbuf = dso_local global %"struct map_internal_repr_t.622" zeroinitializer, section ".maps", !dbg !75
+@AT_y = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
+@AT_z = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !28
+@stack_perf_127 = dso_local global %"struct map_internal_repr_t.572" zeroinitializer, section ".maps", !dbg !30
+@stack_bpftrace_6 = dso_local global %"struct map_internal_repr_t.573" zeroinitializer, section ".maps", !dbg !54
+@stack_bpftrace_127 = dso_local global %"struct map_internal_repr_t.574" zeroinitializer, section ".maps", !dbg !63
+@stack_scratch = dso_local global %"struct map_internal_repr_t.575" zeroinitializer, section ".maps", !dbg !65
+@ringbuf = dso_local global %"struct map_internal_repr_t.576" zeroinitializer, section ".maps", !dbg !75
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !89
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !93
 
@@ -54,7 +54,7 @@ stack_scratch_failure:                            ; preds = %lookup_stack_scratc
 
 merge_block:                                      ; preds = %stack_scratch_failure, %get_stack_success, %get_stack_fail
   %1 = getelementptr %ustack_key, ptr %stack_key, i64 0, i32 2
-  %get_pid_tgid = call i64 inttoptr (i64 14 to ptr)() #4
+  %get_pid_tgid = call i64 inttoptr (i64 14 to ptr)() #5
   %2 = lshr i64 %get_pid_tgid, 32
   %pid = trunc i64 %2 to i32
   store i32 %pid, ptr %1, align 4
@@ -62,6 +62,7 @@ merge_block:                                      ; preds = %stack_scratch_failu
   store i32 0, ptr %3, align 4
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_key")
   store i64 0, ptr %"@x_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %stack_key, ptr align 1 %stack_key, i64 24, i1 false)
   %update_elem1 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key", ptr %stack_key, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_key")
   call void @llvm.lifetime.start.p0(i64 -1, ptr %stack_key2)
@@ -101,7 +102,7 @@ stack_scratch_failure3:                           ; preds = %lookup_stack_scratc
 
 merge_block4:                                     ; preds = %stack_scratch_failure3, %get_stack_success10, %get_stack_fail11
   %9 = getelementptr %ustack_key, ptr %stack_key2, i64 0, i32 2
-  %get_pid_tgid15 = call i64 inttoptr (i64 14 to ptr)() #4
+  %get_pid_tgid15 = call i64 inttoptr (i64 14 to ptr)() #5
   %10 = lshr i64 %get_pid_tgid15, 32
   %pid16 = trunc i64 %10 to i32
   store i32 %pid16, ptr %9, align 4
@@ -109,6 +110,7 @@ merge_block4:                                     ; preds = %stack_scratch_failu
   store i32 0, ptr %11, align 4
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@y_key")
   store i64 0, ptr %"@y_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %stack_key2, ptr align 1 %stack_key2, i64 24, i1 false)
   %update_elem17 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_y, ptr %"@y_key", ptr %stack_key2, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@y_key")
   call void @llvm.lifetime.start.p0(i64 -1, ptr %stack_key18)
@@ -148,7 +150,7 @@ stack_scratch_failure19:                          ; preds = %lookup_stack_scratc
 
 merge_block20:                                    ; preds = %stack_scratch_failure19, %get_stack_success27, %get_stack_fail28
   %17 = getelementptr %ustack_key, ptr %stack_key18, i64 0, i32 2
-  %get_pid_tgid32 = call i64 inttoptr (i64 14 to ptr)() #4
+  %get_pid_tgid32 = call i64 inttoptr (i64 14 to ptr)() #5
   %18 = lshr i64 %get_pid_tgid32, 32
   %pid33 = trunc i64 %18 to i32
   store i32 %pid33, ptr %17, align 4
@@ -156,6 +158,7 @@ merge_block20:                                    ; preds = %stack_scratch_failu
   store i32 0, ptr %19, align 4
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@z_key")
   store i64 0, ptr %"@z_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %stack_key18, ptr align 1 %stack_key18, i64 24, i1 false)
   %update_elem34 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_z, ptr %"@z_key", ptr %stack_key18, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@z_key")
   ret i64 0
@@ -270,11 +273,15 @@ declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #2
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #3
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #4
+
 attributes #0 = { nounwind }
 attributes #1 = { alwaysinline nounwind }
 attributes #2 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 attributes #3 = { nocallback nofree nounwind willreturn memory(argmem: write) }
-attributes #4 = { memory(none) }
+attributes #4 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #5 = { memory(none) }
 
 !llvm.dbg.cu = !{!95}
 !llvm.module.flags = !{!97, !98}

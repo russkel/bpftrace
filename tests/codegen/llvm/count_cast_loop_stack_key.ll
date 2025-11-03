@@ -4,17 +4,17 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.618" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.572" = type { ptr, ptr }
 %kstack_key = type { i64, i64 }
 %kstack_count_t__tuple_t = type { %kstack_key, i64 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@stack_raw_127 = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !30
-@stack_scratch = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !49
-@ringbuf = dso_local global %"struct map_internal_repr_t.618" zeroinitializer, section ".maps", !dbg !66
+@stack_raw_127 = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !30
+@stack_scratch = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !49
+@ringbuf = dso_local global %"struct map_internal_repr_t.572" zeroinitializer, section ".maps", !dbg !66
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !80
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !82
 @__bt__num_cpus = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !86
@@ -42,6 +42,7 @@ stack_scratch_failure:                            ; preds = %lookup_stack_scratc
   br label %merge_block
 
 merge_block:                                      ; preds = %stack_scratch_failure, %get_stack_success, %get_stack_fail
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %stack_key, ptr align 1 %stack_key, i64 16, i1 false)
   %lookup_elem = call ptr inttoptr (i64 1 to ptr)(ptr @AT_x, ptr %stack_key)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %lookup_elem_val)
   %map_lookup_cond = icmp ne ptr %lookup_elem, null
@@ -175,6 +176,9 @@ declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #2
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #3
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #4
+
 ; Function Attrs: nounwind
 define internal i64 @map_for_each_cb(ptr %0, ptr %1, ptr %2, ptr %3) #0 section ".text" !dbg !98 {
 for_body:
@@ -246,9 +250,6 @@ error_failure:                                    ; preds = %lookup_failure
 for_continue:                                     ; preds = %while_end
   ret i64 0
 }
-
-; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
-declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #4
 
 attributes #0 = { nounwind }
 attributes #1 = { alwaysinline nounwind }

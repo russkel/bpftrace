@@ -4,20 +4,20 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.618" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.619" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.620" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.572" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.573" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.574" = type { ptr, ptr }
 %runtime_error_t = type <{ i64, i64, i32 }>
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_a = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@AT_b = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !22
-@AT_c = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !29
-@AT_d = dso_local global %"struct map_internal_repr_t.618" zeroinitializer, section ".maps", !dbg !35
-@AT_e = dso_local global %"struct map_internal_repr_t.619" zeroinitializer, section ".maps", !dbg !37
-@ringbuf = dso_local global %"struct map_internal_repr_t.620" zeroinitializer, section ".maps", !dbg !46
+@AT_b = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !22
+@AT_c = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !29
+@AT_d = dso_local global %"struct map_internal_repr_t.572" zeroinitializer, section ".maps", !dbg !35
+@AT_e = dso_local global %"struct map_internal_repr_t.573" zeroinitializer, section ".maps", !dbg !37
+@ringbuf = dso_local global %"struct map_internal_repr_t.574" zeroinitializer, section ".maps", !dbg !46
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !60
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !64
 
@@ -121,13 +121,14 @@ oob_merge:                                        ; preds = %counter_merge, %ent
   %probe_read_kernel4 = call i64 inttoptr (i64 113 to ptr)(ptr %"struct x.e", i32 5, ptr %31)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@e_key")
   store i64 0, ptr %"@e_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"struct x.e", ptr align 1 %"struct x.e", i64 5, i1 false)
   %update_elem5 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_e, ptr %"@e_key", ptr %"struct x.e", i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@e_key")
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"struct x.e")
   ret i64 0
 
 event_loss_counter:                               ; preds = %is_oob
-  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #3
+  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #4
   %32 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded = and i64 %get_cpu_id, %32
   %33 = getelementptr [1 x [1 x i64]], ptr @__bt__event_loss_counter, i64 0, i64 %cpu.id.bounded, i64 0
@@ -150,10 +151,14 @@ declare ptr @llvm.preserve.static.offset(ptr readnone %0) #2
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #1
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #3
+
 attributes #0 = { nounwind }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 attributes #2 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }
-attributes #3 = { memory(none) }
+attributes #3 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #4 = { memory(none) }
 
 !llvm.dbg.cu = !{!66}
 !llvm.module.flags = !{!68, !69}

@@ -4,12 +4,12 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 %buffer_16_t = type <{ i32, [16 x i8] }>
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !40
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !44
 @__bt__get_str_buf = dso_local externally_initialized global [1 x [1 x [1024 x i8]]] zeroinitializer, section ".data.get_str_buf", !dbg !46
@@ -25,7 +25,7 @@ entry:
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"$foo")
   store i0 0, ptr %"$foo", align 1
   store ptr null, ptr %"$foo", align 8
-  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #4
+  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #5
   %1 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded = and i64 %get_cpu_id, %1
   %2 = getelementptr [1 x [1 x [1024 x i8]]], ptr @__bt__get_str_buf, i64 0, i64 %cpu.id.bounded, i64 0, i64 0
@@ -39,6 +39,7 @@ entry:
   %probe_read_kernel = call i64 inttoptr (i64 113 to ptr)(ptr %4, i32 16, ptr %7)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_key")
   store i64 0, ptr %"@x_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %2, ptr align 1 %2, i64 20, i1 false)
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key", ptr %2, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_key")
   ret i64 0
@@ -53,6 +54,9 @@ declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 i
 ; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)
 declare ptr @llvm.preserve.static.offset(ptr readnone %0) #3
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #4
+
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #1
 
@@ -60,7 +64,8 @@ attributes #0 = { nounwind }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 attributes #2 = { nocallback nofree nounwind willreturn memory(argmem: write) }
 attributes #3 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }
-attributes #4 = { memory(none) }
+attributes #4 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #5 = { memory(none) }
 
 !llvm.dbg.cu = !{!53}
 !llvm.module.flags = !{!55, !56}

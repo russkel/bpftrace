@@ -4,13 +4,13 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_foo = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@AT_str = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
-@ringbuf = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !35
+@AT_str = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
+@ringbuf = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !35
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !49
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !53
 
@@ -56,6 +56,7 @@ lookup_merge:                                     ; preds = %lookup_failure, %lo
   %4 = getelementptr [32 x i8], ptr %lookup_elem_val, i32 0, i64 0
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@str_key")
   store i64 0, ptr %"@str_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %4, ptr align 1 %4, i64 33, i1 false)
   %update_elem2 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_str, ptr %"@str_key", ptr %4, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@str_key")
   call void @llvm.lifetime.end.p0(i64 -1, ptr %lookup_elem_val)

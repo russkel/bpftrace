@@ -4,11 +4,11 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !40
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !44
 @xxxxx = global [6 x i8] c"xxxxx\00"
@@ -20,40 +20,42 @@ declare i64 @llvm.bpf.pseudo(i64 %0, i64 %1) #0
 ; Function Attrs: nounwind
 define i64 @kprobe_f_1(ptr %0) #0 section "s_kprobe_f_1" !dbg !50 {
 entry:
-  %"@x_val" = alloca [6 x i8], align 1
   %"@x_key1" = alloca i64, align 8
+  %1 = alloca [6 x i8], align 1
   %"@x_key" = alloca i64, align 8
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_key")
   store i64 0, ptr %"@x_key", align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @xxxxx, ptr align 1 @xxxxx, i64 6, i1 false)
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key", ptr @xxxxx, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_key")
+  call void @llvm.lifetime.start.p0(i64 -1, ptr %1)
+  call void @llvm.memset.p0.i64(ptr align 1 %1, i8 0, i64 6, i1 false)
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %1, ptr align 1 @a, i64 2, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_key1")
   store i64 0, ptr %"@x_key1", align 8
-  call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_val")
-  call void @llvm.memset.p0.i64(ptr align 1 %"@x_val", i8 0, i64 6, i1 false)
-  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"@x_val", ptr align 1 @a, i64 2, i1 false)
-  %update_elem2 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key1", ptr %"@x_val", i64 0)
-  call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_val")
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %1, ptr align 1 %1, i64 6, i1 false)
+  %update_elem2 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"@x_key1", ptr %1, i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_key1")
+  call void @llvm.lifetime.end.p0(i64 -1, ptr %1)
   ret i64 0
 }
 
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.start.p0(i64 immarg %0, ptr nocapture %1) #1
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #2
+
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #1
 
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
-declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #2
-
-; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
-declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #3
+declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #3
 
 attributes #0 = { nounwind }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
-attributes #2 = { nocallback nofree nounwind willreturn memory(argmem: write) }
-attributes #3 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #2 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #3 = { nocallback nofree nounwind willreturn memory(argmem: write) }
 
 !llvm.dbg.cu = !{!46}
 !llvm.module.flags = !{!48, !49}

@@ -4,12 +4,12 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 %usym_t = type { i64, i32, i32 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !29
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !29
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !43
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !48
 
@@ -22,7 +22,7 @@ entry:
   %"@x_val" = alloca i8, align 1
   %usym = alloca %usym_t, align 8
   call void @llvm.lifetime.start.p0(i64 -1, ptr %usym)
-  %get_pid_tgid = call i64 inttoptr (i64 14 to ptr)() #2
+  %get_pid_tgid = call i64 inttoptr (i64 14 to ptr)() #3
   %1 = lshr i64 %get_pid_tgid, 32
   %pid = trunc i64 %1 to i32
   %2 = getelementptr %usym_t, ptr %usym, i64 0, i32 0
@@ -31,6 +31,7 @@ entry:
   store i64 0, ptr %2, align 8
   store i32 %pid, ptr %3, align 4
   store i32 0, ptr %4, align 4
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %usym, ptr align 1 %usym, i64 16, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_val")
   store i8 1, ptr %"@x_val", align 1
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %usym, ptr %"@x_val", i64 0)
@@ -41,12 +42,16 @@ entry:
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.start.p0(i64 immarg %0, ptr nocapture %1) #1
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #2
+
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #1
 
 attributes #0 = { nounwind }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
-attributes #2 = { memory(none) }
+attributes #2 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #3 = { memory(none) }
 
 !llvm.dbg.cu = !{!50}
 !llvm.module.flags = !{!52, !53}

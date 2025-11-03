@@ -4,11 +4,11 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !38
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !40
 @__bt__map_key_buf = dso_local externally_initialized global [1 x [1 x [8 x i8]]] zeroinitializer, section ".data.map_key_buf", !dbg !44
@@ -20,17 +20,22 @@ declare i64 @llvm.bpf.pseudo(i64 %0, i64 %1) #0
 ; Function Attrs: nounwind
 define i64 @tracepoint_sched_sched_one_1(ptr %0) #0 section "s_tracepoint_sched_sched_one_1" !dbg !55 {
 entry:
-  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #1
+  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #2
   %1 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded = and i64 %get_cpu_id, %1
   %2 = getelementptr [1 x [1 x [8 x i8]]], ptr @__bt__map_key_buf, i64 0, i64 %cpu.id.bounded, i64 0, i64 0
   store i64 0, ptr %2, align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @"tracepoint:sched:sched_one", ptr align 1 @"tracepoint:sched:sched_one", i64 27, i1 false)
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %2, ptr @"tracepoint:sched:sched_one", i64 0)
   ret i64 1
 }
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #1
+
 attributes #0 = { nounwind }
-attributes #1 = { memory(none) }
+attributes #1 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #2 = { memory(none) }
 
 !llvm.dbg.cu = !{!51}
 !llvm.module.flags = !{!53, !54}

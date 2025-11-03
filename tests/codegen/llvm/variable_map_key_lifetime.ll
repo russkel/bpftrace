@@ -4,11 +4,11 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !26
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !26
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !40
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !45
 @abc = global [4 x i8] c"abc\00"
@@ -25,10 +25,12 @@ entry:
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"$myvar")
   call void @llvm.memset.p0.i64(ptr align 1 %"$myvar", i8 0, i64 4, i1 false)
   call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"$myvar", ptr align 1 @abc, i64 4, i1 false)
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"$myvar", ptr align 1 %"$myvar", i64 4, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_val")
   store i8 1, ptr %"@x_val", align 1
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"$myvar", ptr %"@x_val", i64 0)
   call void @llvm.lifetime.end.p0(i64 -1, ptr %"@x_val")
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %"$myvar", ptr align 1 %"$myvar", i64 4, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_val1")
   store i8 1, ptr %"@x_val1", align 1
   %update_elem2 = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %"$myvar", ptr %"@x_val1", i64 0)

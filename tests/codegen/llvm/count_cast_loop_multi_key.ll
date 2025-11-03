@@ -4,13 +4,13 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 %uint8_uint8__tuple_t = type { i8, i8 }
 %"(uint8,uint8)_count_t__tuple_t" = type { %uint8_uint8__tuple_t, i64 }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !31
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !31
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !45
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !47
 @__bt__num_cpus = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !53
@@ -30,6 +30,7 @@ entry:
   store i8 1, ptr %1, align 1
   %2 = getelementptr %uint8_uint8__tuple_t, ptr %tuple, i32 0, i32 1
   store i8 2, ptr %2, align 1
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 %tuple, ptr align 1 %tuple, i64 2, i1 false)
   %lookup_elem = call ptr inttoptr (i64 1 to ptr)(ptr @AT_x, ptr %tuple)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %lookup_elem_val)
   %map_lookup_cond = icmp ne ptr %lookup_elem, null
@@ -60,6 +61,9 @@ declare void @llvm.lifetime.start.p0(i64 immarg %0, ptr nocapture %1) #1
 
 ; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: write)
 declare void @llvm.memset.p0.i64(ptr nocapture writeonly %0, i8 %1, i64 %2, i1 immarg %3) #2
+
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #3
 
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
 declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #1
@@ -135,9 +139,6 @@ error_failure:                                    ; preds = %lookup_failure
 for_continue:                                     ; preds = %while_end
   ret i64 0
 }
-
-; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
-declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #3
 
 attributes #0 = { nounwind }
 attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }

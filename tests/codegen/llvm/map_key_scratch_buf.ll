@@ -4,13 +4,13 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.617" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr, ptr, ptr }
+%"struct map_internal_repr_t.571" = type { ptr, ptr }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@AT_y = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !25
-@ringbuf = dso_local global %"struct map_internal_repr_t.617" zeroinitializer, section ".maps", !dbg !34
+@AT_y = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !25
+@ringbuf = dso_local global %"struct map_internal_repr_t.571" zeroinitializer, section ".maps", !dbg !34
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !48
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !51
 @__bt__map_key_buf = dso_local externally_initialized global [1 x [2 x [1 x i8]]] zeroinitializer, section ".data.map_key_buf", !dbg !55
@@ -24,24 +24,24 @@ declare i64 @llvm.bpf.pseudo(i64 %0, i64 %1) #0
 ; Function Attrs: nounwind
 define i64 @kprobe_f_1(ptr %0) #0 section "s_kprobe_f_1" !dbg !72 {
 entry:
-  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #1
+  %get_cpu_id = call i64 inttoptr (i64 8 to ptr)() #2
   %1 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded = and i64 %get_cpu_id, %1
   %2 = getelementptr [1 x [2 x [1 x i8]]], ptr @__bt__map_key_buf, i64 0, i64 %cpu.id.bounded, i64 0, i64 0
   store i8 1, ptr %2, align 1
-  %get_cpu_id1 = call i64 inttoptr (i64 8 to ptr)() #1
+  %get_cpu_id1 = call i64 inttoptr (i64 8 to ptr)() #2
   %3 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded2 = and i64 %get_cpu_id1, %3
   %4 = getelementptr [1 x [1 x [1 x i8]]], ptr @__bt__write_map_val_buf, i64 0, i64 %cpu.id.bounded2, i64 0, i64 0
   store i8 1, ptr %4, align 1
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr %2, ptr %4, i64 0)
-  %get_cpu_id3 = call i64 inttoptr (i64 8 to ptr)() #1
+  %get_cpu_id3 = call i64 inttoptr (i64 8 to ptr)() #2
   %5 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded4 = and i64 %get_cpu_id3, %5
   %6 = getelementptr [1 x [2 x [1 x i8]]], ptr @__bt__map_key_buf, i64 0, i64 %cpu.id.bounded4, i64 1, i64 0
   store i8 1, ptr %6, align 1
   %lookup_elem = call ptr inttoptr (i64 1 to ptr)(ptr @AT_x, ptr %6)
-  %get_cpu_id5 = call i64 inttoptr (i64 8 to ptr)() #1
+  %get_cpu_id5 = call i64 inttoptr (i64 8 to ptr)() #2
   %7 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded6 = and i64 %get_cpu_id5, %7
   %8 = getelementptr [1 x [1 x [1 x i8]]], ptr @__bt__read_map_val_buf, i64 0, i64 %cpu.id.bounded6, i64 0, i64 0
@@ -59,7 +59,8 @@ lookup_failure:                                   ; preds = %entry
 
 lookup_merge:                                     ; preds = %lookup_failure, %lookup_success
   %10 = load i8, ptr %8, align 1
-  %get_cpu_id7 = call i64 inttoptr (i64 8 to ptr)() #1
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @yyyy, ptr align 1 @yyyy, i64 5, i1 false)
+  %get_cpu_id7 = call i64 inttoptr (i64 8 to ptr)() #2
   %11 = load i64, ptr @__bt__max_cpu_id, align 8
   %cpu.id.bounded8 = and i64 %get_cpu_id7, %11
   %12 = getelementptr [1 x [1 x [1 x i8]]], ptr @__bt__write_map_val_buf, i64 0, i64 %cpu.id.bounded8, i64 0, i64 0
@@ -68,8 +69,12 @@ lookup_merge:                                     ; preds = %lookup_failure, %lo
   ret i64 0
 }
 
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #1
+
 attributes #0 = { nounwind }
-attributes #1 = { memory(none) }
+attributes #1 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #2 = { memory(none) }
 
 !llvm.dbg.cu = !{!68}
 !llvm.module.flags = !{!70, !71}

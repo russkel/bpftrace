@@ -4,11 +4,11 @@ target datalayout = "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128"
 target triple = "bpf"
 
 %"struct map_internal_repr_t" = type { ptr, ptr, ptr, ptr }
-%"struct map_internal_repr_t.616" = type { ptr, ptr }
+%"struct map_internal_repr_t.570" = type { ptr, ptr }
 
 @LICENSE = global [4 x i8] c"GPL\00", section "license", !dbg !0
 @AT_x = dso_local global %"struct map_internal_repr_t" zeroinitializer, section ".maps", !dbg !7
-@ringbuf = dso_local global %"struct map_internal_repr_t.616" zeroinitializer, section ".maps", !dbg !30
+@ringbuf = dso_local global %"struct map_internal_repr_t.570" zeroinitializer, section ".maps", !dbg !30
 @__bt__event_loss_counter = dso_local externally_initialized global [1 x [1 x i64]] zeroinitializer, section ".data.event_loss_counter", !dbg !42
 @__bt__max_cpu_id = dso_local externally_initialized constant i64 0, section ".rodata", !dbg !46
 @"tracepoint:sched:sched_one" = global [27 x i8] c"tracepoint:sched:sched_one\00"
@@ -22,6 +22,7 @@ define i64 @tracepoint_sched_sched_one_1(ptr %0) #0 section "s_tracepoint_sched_
 entry:
   %"@x_val" = alloca i64, align 8
   %lookup_elem_val = alloca i64, align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @"tracepoint:sched:sched_one", ptr align 1 @"tracepoint:sched:sched_one", i64 27, i1 false)
   %lookup_elem = call ptr inttoptr (i64 1 to ptr)(ptr @AT_x, ptr @"tracepoint:sched:sched_one")
   call void @llvm.lifetime.start.p0(i64 -1, ptr %lookup_elem_val)
   %map_lookup_cond = icmp ne ptr %lookup_elem, null
@@ -40,6 +41,7 @@ lookup_merge:                                     ; preds = %lookup_failure, %lo
   %2 = load i64, ptr %lookup_elem_val, align 8
   call void @llvm.lifetime.end.p0(i64 -1, ptr %lookup_elem_val)
   %3 = add i64 %2, 1
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @"tracepoint:sched:sched_one", ptr align 1 @"tracepoint:sched:sched_one", i64 27, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_val")
   store i64 %3, ptr %"@x_val", align 8
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr @"tracepoint:sched:sched_one", ptr %"@x_val", i64 0)
@@ -47,17 +49,21 @@ lookup_merge:                                     ; preds = %lookup_failure, %lo
   ret i64 1
 }
 
-; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
-declare void @llvm.lifetime.start.p0(i64 immarg %0, ptr nocapture %1) #1
+; Function Attrs: nocallback nofree nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.memcpy.p0.p0.i64(ptr noalias nocapture writeonly %0, ptr noalias nocapture readonly %1, i64 %2, i1 immarg %3) #1
 
 ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
-declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #1
+declare void @llvm.lifetime.start.p0(i64 immarg %0, ptr nocapture %1) #2
+
+; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.lifetime.end.p0(i64 immarg %0, ptr nocapture %1) #2
 
 ; Function Attrs: nounwind
 define i64 @tracepoint_sched_sched_two_2(ptr %0) #0 section "s_tracepoint_sched_sched_two_2" !dbg !58 {
 entry:
   %"@x_val" = alloca i64, align 8
   %lookup_elem_val = alloca i64, align 8
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @"tracepoint:sched:sched_two", ptr align 1 @"tracepoint:sched:sched_two", i64 27, i1 false)
   %lookup_elem = call ptr inttoptr (i64 1 to ptr)(ptr @AT_x, ptr @"tracepoint:sched:sched_two")
   call void @llvm.lifetime.start.p0(i64 -1, ptr %lookup_elem_val)
   %map_lookup_cond = icmp ne ptr %lookup_elem, null
@@ -76,6 +82,7 @@ lookup_merge:                                     ; preds = %lookup_failure, %lo
   %2 = load i64, ptr %lookup_elem_val, align 8
   call void @llvm.lifetime.end.p0(i64 -1, ptr %lookup_elem_val)
   %3 = add i64 %2, 1
+  call void @llvm.memcpy.p0.p0.i64(ptr align 1 @"tracepoint:sched:sched_two", ptr align 1 @"tracepoint:sched:sched_two", i64 27, i1 false)
   call void @llvm.lifetime.start.p0(i64 -1, ptr %"@x_val")
   store i64 %3, ptr %"@x_val", align 8
   %update_elem = call i64 inttoptr (i64 2 to ptr)(ptr @AT_x, ptr @"tracepoint:sched:sched_two", ptr %"@x_val", i64 0)
@@ -84,7 +91,8 @@ lookup_merge:                                     ; preds = %lookup_failure, %lo
 }
 
 attributes #0 = { nounwind }
-attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
+attributes #1 = { nocallback nofree nounwind willreturn memory(argmem: readwrite) }
+attributes #2 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 
 !llvm.dbg.cu = !{!48}
 !llvm.module.flags = !{!50, !51}
